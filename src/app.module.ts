@@ -8,9 +8,9 @@ import { UserModule } from './user/user.module';
 
 @Module({
   imports: [
-    PostModule,
     ConfigModule.forRoot(),
     MongooseModule.forRoot(process.env.MONGODB_URL),
+    PostModule,
     UserModule,
   ],
   controllers: [AppController],

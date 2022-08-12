@@ -1,47 +1,68 @@
-import { HttpException, HttpStatus, Injectable } from '@nestjs/common';
-import { UserRepository } from '../repositories/user.repository';
-import { CreateUserDto, LoginUserDto } from '../dto/user.dto';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { InjectModel } from '@nestjs/mongoose';
+import { Model } from 'mongoose';
 import * as bcrypt from 'bcrypt';
 
+import { User } from '../models/user.model';
+
 @Injectable()
-export class UserService {
-  constructor(private readonly userRepository: UserRepository) {}
+export class UsersService {
+  constructor(@InjectModel('User') private readonly UserModel: Model<User>) {}
 
-  async create(userDto: CreateUserDto) {
-    userDto.password = await bcrypt.hash(userDto.password, 10);
+  async create(user: User): Promise<User> {
+    user.password = await bcrypt.hash(user.password, 10);
+    // // check exists
+    // const userInDb = await this.UserModel.findOne({ email: user.email });
+    // if (userInDb) {
+    //   throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
+    // }
 
-    // check exists
-    const userInDb = await this.userRepository.findByCondition({
-      email: userDto.email,
-    });
-    if (userInDb) {
-      throw new HttpException('User already exists', HttpStatus.BAD_REQUEST);
-    }
+    const createdUser = new this.UserModel(user);
 
-    return await this.userRepository.create(userDto);
+    return await createdUser.save();
   }
 
-  async findByLogin({ email, password }: LoginUserDto) {
-    const user = await this.userRepository.findByCondition({
-      email: email,
+  async findAll(options?: any): Promise<User[]> {
+    const users = await this.UserModel.find(options).exec();
+    const serializedUsers = users.map((user) => {
+      return user.schema.methods.serialize(user);
     });
 
-    if (!user) {
-      throw new HttpException('User not found', HttpStatus.UNAUTHORIZED);
-    }
+    return serializedUsers;
+  }
 
-    const is_equal = bcrypt.compareSync(password, user['password']);
+  async findById(id: string): Promise<User | null> {
+    let user = await this.UserModel.findById(id).exec();
 
-    if (!is_equal) {
-      throw new HttpException('Invalid credentials', HttpStatus.UNAUTHORIZED);
+    if (user) {
+      user = user.schema.methods.serialize(user);
     }
 
     return user;
   }
 
+  async findOne(
+    options: any,
+    fields?: any,
+    isSerialized?: boolean,
+  ): Promise<User | null> {
+    let user = await this.UserModel.findOne(options, fields).exec();
+    if (user && isSerialized) {
+      user = user.schema.methods.serialize(user);
+    }
+
+    return user;
+  }
+
+  async update(id: number, newValue: User): Promise<User | null> {
+    return await this.UserModel.findByIdAndUpdate(id, newValue).exec();
+  }
+
+  async delete(id: number): Promise<User | null> {
+    return await this.UserModel.findByIdAndRemove(id).exec();
+  }
+
   async findByEmail(email) {
-    return await this.userRepository.findByCondition({
-      email: email,
-    });
+    return await this.UserModel.findOne({ email: email });
   }
 }

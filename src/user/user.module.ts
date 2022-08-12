@@ -1,35 +1,31 @@
-import { Module } from '@nestjs/common';
-import { JwtModule } from '@nestjs/jwt';
+import { Module, MiddlewareConsumer, RequestMethod } from '@nestjs/common';
 import { MongooseModule } from '@nestjs/mongoose';
-import { PassportModule } from '@nestjs/passport';
-import { AuthController } from './controllers/auth.controller';
-import { UserController } from './controllers/user.controller';
+import { UserController } from './controller/user.controller';
 import { UserSchema } from './models/user.model';
-import { UserRepository } from './repositories/user.repository';
-import { AuthService } from './services/auth.service';
-import { UserService } from './services/user.service';
-import { ConfigModule, ConfigService } from '@nestjs/config';
+import { UsersService } from './services/user.service';
+import { AuthMiddleware } from '../common/middlewares/auth.middleware';
+import { AuthModule } from '../auth/auth.module';
+import { JwtService } from 'src/auth/jwt/jwt.service';
+import { AuthService } from 'src/auth/auth.service';
 
 @Module({
   imports: [
     MongooseModule.forFeature([{ name: 'User', schema: UserSchema }]),
-    PassportModule.register({
-      defaultStrategy: 'jwt',
-      property: 'User',
-      session: false,
-    }),
-    JwtModule.registerAsync({
-      imports: [ConfigModule],
-      useFactory: async (configService: ConfigService) => ({
-        secret: configService.get('SECRETKEY'),
-        signOptions: {
-          expiresIn: configService.get('EXPIRESIN'),
-        },
-      }),
-      inject: [ConfigService],
-    }),
+    AuthModule,
   ],
-  controllers: [AuthController, UserController],
-  providers: [UserService, AuthService, UserRepository],
+  controllers: [UserController],
+  providers: [UsersService, AuthService],
+  exports: [UsersService, AuthService],
 })
-export class UserModule {}
+export class UserModule {
+  public configure(consumer: MiddlewareConsumer) {
+    // consumer
+    //   .apply(AuthMiddleware)
+    //   .exclude(
+    //     { path: 'login', method: RequestMethod.POST },
+    //     { path: 'register', method: RequestMethod.POST },
+    //     'user/(.*)',
+    //   )
+    //   .forRoutes(UserController);
+  }
+}
