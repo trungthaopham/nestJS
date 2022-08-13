@@ -1,19 +1,29 @@
-import { Injectable } from '@nestjs/common';
-import { UsersService } from '../user/services/user.service';
-import { LoginUserDto } from '../user/dto/user.dto';
-import { User } from '../user/models/user.model';
+import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
+import { UserI } from '../user/models/user.interface';
+import { JwtService } from '@nestjs/jwt';
+import * as bcrypt from 'bcrypt';
 
 @Injectable()
 export class AuthService {
-  constructor(private readonly userService: UsersService) {}
+  constructor(private readonly jwtService: JwtService) {}
 
-  async register(userDto: User) {
-    const user = await this.userService.create(userDto);
-    return user;
+  // eslint-disable-next-line @typescript-eslint/ban-types
+  async generateJwt(user: UserI): Promise<string> {
+    return this.jwtService.signAsync({ user });
   }
 
-  async login(loginUserDto: LoginUserDto) {
-    const user = await this.userService.findByEmail(loginUserDto.email);
-    return user;
+  async verifyJwt(jwt: string): Promise<any> {
+    return this.jwtService.verifyAsync(jwt);
+  }
+
+  async hashPassword(password: string): Promise<string> {
+    return bcrypt.hash(password, 12);
+  }
+
+  async comparePasswords(
+    password: string,
+    storedPasswordHash: string,
+  ): Promise<any> {
+    return bcrypt.compare(password, storedPasswordHash);
   }
 }

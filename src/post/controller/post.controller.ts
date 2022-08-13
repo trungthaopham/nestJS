@@ -14,6 +14,10 @@ import { PostService } from '../service/post.service';
 import { ExceptionLoggerFilter } from '../../utils/exceptionLogger.filter';
 import { HttpExceptionFilter } from '../../utils/httpException.filter';
 
+import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
+
+@ApiTags('Post')
+@ApiBearerAuth()
 @Controller('post')
 export class PostController {
   constructor(private readonly postService: PostService) {}
