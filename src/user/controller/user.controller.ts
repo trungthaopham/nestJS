@@ -1,5 +1,10 @@
-import { Body, Controller, Get, Post, Req } from '@nestjs/common';
-import { LoginUserDto, CreateUserDto } from '../dto/user.dto';
+import { Body, Controller, Get, Param, Post, Put, Req } from '@nestjs/common';
+import {
+  LoginUserDto,
+  CreateUserDto,
+  updateUserDto,
+  changePasswordDto,
+} from '../dto/user.dto';
 import { UserI } from '../models/user.interface';
 import { UsersService } from '../services/user.service';
 import { UserHelperService } from '../services/user-helper/user-helper.service';
@@ -46,5 +51,25 @@ export class UserController {
     const result = req.userInfo.user;
     delete result.password;
     return result;
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'update user' })
+  @Put('update/:id')
+  async update(
+    @Param('id') id: string,
+    @Body() UpdateUserDto: updateUserDto,
+  ): Promise<UserI> {
+    return this.userService.update(id, UpdateUserDto);
+  }
+
+  @ApiBearerAuth()
+  @ApiOperation({ summary: 'change password user' })
+  @Put('changePassword/:id')
+  async changePassword(
+    @Param('id') id: string,
+    @Body() UpdateUserDto: changePasswordDto,
+  ): Promise<UserI> {
+    return this.userService.changePassword(id, UpdateUserDto);
   }
 }

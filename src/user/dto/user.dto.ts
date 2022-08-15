@@ -6,6 +6,7 @@ export class CreateUserDto {
   @IsString()
   @IsNotEmpty()
   username: string;
+
   @ApiProperty()
   @IsEmail()
   email: string;
@@ -13,13 +14,41 @@ export class CreateUserDto {
   @ApiProperty()
   @IsNotEmpty()
   password: string;
+
+  @ApiProperty({ required: false })
+  age: string;
 }
 export class LoginUserDto {
   @ApiProperty()
   @IsNotEmpty()
   @IsEmail()
   email: string;
+
   @ApiProperty()
   @IsNotEmpty()
   password: string;
+}
+
+export class updateUserDto {
+  @ApiProperty()
+  @IsString()
+  @IsNotEmpty()
+  username: string;
+
+  @ApiProperty({ required: false })
+  age: string;
+}
+
+export class changePasswordDto {
+  @ApiProperty()
+  @IsNotEmpty()
+  password: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  passwordNew: string;
+
+  @ApiProperty()
+  @IsNotEmpty()
+  passwordConfirm: string;
 }

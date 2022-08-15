@@ -1,7 +1,12 @@
 import { Injectable, HttpException, HttpStatus } from '@nestjs/common';
 import { UserI } from '../models/user.interface';
 import { AuthService } from 'src/auth/auth.service';
-import { LoginUserDto } from '../dto/user.dto';
+import {
+  changePasswordDto,
+  CreateUserDto,
+  LoginUserDto,
+  updateUserDto,
+} from '../dto/user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
 import { User, UserDocument } from '../schemas/user.schema';
@@ -57,6 +62,38 @@ export class UsersService {
     }
   }
 
+  async changePassword(id: string, data: changePasswordDto): Promise<any> {
+    try {
+      const foundUser: UserI = await this.findOne(id);
+      if (foundUser) {
+        const matches: boolean = await this.validatePassword(
+          data.password,
+          foundUser.password,
+        );
+        const confirmPasswordNew = await this.confirm(
+          data.passwordNew,
+          data.passwordConfirm,
+        );
+        if (matches && confirmPasswordNew) {
+          const passwordNew: string = await this.hashPassword(data.passwordNew);
+          const userNew = await this.userModel.findByIdAndUpdate(id, {
+            password: passwordNew,
+          });
+          return userNew;
+        }
+      } else {
+        throw new HttpException('Not found user', HttpStatus.NOT_FOUND);
+      }
+    } catch {
+      throw new HttpException('Change Failed', HttpStatus.BAD_REQUEST);
+    }
+  }
+
+  async update(id: string, newValue: updateUserDto): Promise<UserI> {
+    return await this.userModel.findByIdAndUpdate(id, newValue).exec();
+  }
+
+  // helper
   private async validatePassword(
     password: string,
     storedPasswordHash: string,
@@ -87,10 +124,6 @@ export class UsersService {
     return this.userModel.findById(id);
   }
 
-  async update(id: number, newValue: User): Promise<User | null> {
-    return await this.userModel.findByIdAndUpdate(id, newValue).exec();
-  }
-
   async delete(id: number): Promise<User | null> {
     return await this.userModel.findByIdAndRemove(id).exec();
   }
@@ -110,5 +143,12 @@ export class UsersService {
 
   private async hashPassword(password: string): Promise<string> {
     return this.authService.hashPassword(password);
+  }
+
+  private async confirm(
+    password: string,
+    passwordConfirm: string,
+  ): Promise<boolean> {
+    return password === passwordConfirm;
   }
 }
