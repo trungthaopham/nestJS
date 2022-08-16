@@ -10,11 +10,27 @@ export class CategoriesService {
     @InjectModel('Categories') private categoryModel: Model<CategoryDocument>,
   ) {}
 
-  async create(newCategory: CategoryDto): Promise<CategoryDto> {
+  async create(newCategory: CategoryDto): Promise<Category> {
     try {
       return await this.categoryModel.create(newCategory);
     } catch (error) {
       throw new HttpException('not created', HttpStatus.BAD_REQUEST);
     }
+  }
+
+  async getAll(): Promise<Category[]> {
+    return await this.categoryModel.find();
+  }
+
+  async getById(id: string): Promise<Category> {
+    return await this.categoryModel.findById(id);
+  }
+
+  async update(id: string, data: CategoryDto): Promise<Category> {
+    return await this.categoryModel.findByIdAndUpdate(id, data);
+  }
+
+  async delete(id: string): Promise<Category> {
+    return await this.categoryModel.findByIdAndUpdate(id, { isDeleted: true });
   }
 }

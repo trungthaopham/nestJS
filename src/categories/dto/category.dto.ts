@@ -6,7 +6,10 @@ export class CategoryDto {
   @IsNotEmpty()
   @IsString()
   name: string;
+
   @ApiProperty()
   @IsString()
   description: string;
+
+  isDeleted: boolean;
 }
