@@ -33,4 +33,12 @@ export class CategoriesService {
   async delete(id: string): Promise<Category> {
     return await this.categoryModel.findByIdAndUpdate(id, { isDeleted: true });
   }
+
+  async getByCondition(query: any, conditions?: any): Promise<Category[]> {
+    if (conditions) {
+      return await this.categoryModel.find(query).populate(conditions);
+    } else {
+      return await this.categoryModel.find(query);
+    }
+  }
 }
