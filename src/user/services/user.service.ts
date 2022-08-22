@@ -3,7 +3,6 @@ import { UserI } from '../models/user.interface';
 import { AuthService } from 'src/auth/auth.service';
 import {
   changePasswordDto,
-  CreateUserDto,
   LoginUserDto,
   updateUserDto,
 } from '../dto/user.dto';
