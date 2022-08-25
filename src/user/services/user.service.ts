@@ -5,6 +5,7 @@ import {
   changePasswordDto,
   LoginUserDto,
   updateUserDto,
+  CreateUserDto,
 } from '../dto/user.dto';
 import { InjectModel } from '@nestjs/mongoose';
 import { Model } from 'mongoose';
@@ -20,16 +21,26 @@ export class UsersService {
   async create(newUser: UserI): Promise<UserI> {
     try {
       const exists: boolean = await this.mailExists(newUser.email);
-      if (!exists) {
+      const confirmPassword: boolean = await this.confirm(
+        newUser.password,
+        newUser.passwordConfirm,
+      );
+      if (!confirmPassword) {
+        throw new HttpException('Password not confirm', HttpStatus.BAD_REQUEST);
+      }
+      if (!exists && confirmPassword) {
         const passwordHash: string = await this.hashPassword(newUser.password);
         newUser.password = passwordHash;
         const user = await this.userModel.create(newUser);
         return this.findOne(user.id);
       } else {
-        throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+        throw new HttpException('Email is exited', HttpStatus.BAD_REQUEST);
       }
     } catch {
-      throw new HttpException('Invalid token', HttpStatus.UNAUTHORIZED);
+      throw new HttpException(
+        'Email is exited or password is invalid',
+        HttpStatus.BAD_REQUEST,
+      );
     }
   }
 
