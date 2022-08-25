@@ -18,7 +18,7 @@ import { ApiBearerAuth, ApiTags } from '@nestjs/swagger';
 
 @ApiTags('Post')
 @ApiBearerAuth()
-@Controller('post')
+@Controller({ path: 'post', version: '1' })
 export class PostController {
   constructor(private readonly postService: PostService) {}
 

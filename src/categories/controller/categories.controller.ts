@@ -14,7 +14,7 @@ import { CategoriesService } from '../services/categories.service';
 
 @ApiTags('Categories')
 @ApiBearerAuth()
-@Controller('categories')
+@Controller({ path: 'categories', version: '1' })
 export class CategoriesController {
   constructor(private categoryService: CategoriesService) {}
 

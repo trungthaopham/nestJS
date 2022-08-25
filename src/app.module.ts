@@ -28,8 +28,8 @@ export class AppModule {
     consumer
       .apply(AuthMiddleware)
       .exclude(
-        { path: '/user/register', method: RequestMethod.POST },
-        { path: '/user/login', method: RequestMethod.POST },
+        { path: 'api/v1/user/register', method: RequestMethod.POST },
+        { path: 'api/v1/user/login', method: RequestMethod.POST },
       )
       .forRoutes('');
   }
