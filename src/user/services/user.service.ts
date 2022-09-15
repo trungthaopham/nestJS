@@ -100,7 +100,11 @@ export class UsersService {
   }
 
   async update(id: string, newValue: updateUserDto): Promise<UserI> {
-    return await this.userModel.findByIdAndUpdate(id, newValue).exec();
+    return await this.userModel
+      .findByIdAndUpdate(id, newValue, {
+        new: true,
+      })
+      .exec();
   }
 
   // helper
@@ -121,12 +125,7 @@ export class UsersService {
   }
 
   async findById(id: string): Promise<User | null> {
-    let user = await this.userModel.findById(id).exec();
-
-    if (user) {
-      user = user.schema.methods.serialize(user);
-    }
-
+    const user = await this.userModel.findById(id).exec();
     return user;
   }
 

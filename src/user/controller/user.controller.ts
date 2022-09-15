@@ -48,7 +48,8 @@ export class UserController {
   @ApiOperation({ summary: 'get profile' })
   @Get('profile')
   async getProfile(@Req() req: any) {
-    const result = req.userInfo.user;
+    // const result = req.userInfo.user;
+    const result = await this.userService.findById(req.userInfo.user._id);
     delete result.password;
     return result;
   }
@@ -56,11 +57,10 @@ export class UserController {
   @ApiBearerAuth()
   @ApiOperation({ summary: 'update user' })
   @Put('update/:id')
-  async update(
-    @Param('id') id: string,
-    @Body() UpdateUserDto: updateUserDto,
-  ): Promise<UserI> {
-    return this.userService.update(id, UpdateUserDto);
+  async update(@Param('id') id: string, @Body() UpdateUserDto: updateUserDto) {
+    const result = await this.userService.update(id, UpdateUserDto);
+    delete result.password;
+    return result;
   }
 
   @ApiBearerAuth()

@@ -41,6 +41,12 @@ export class updateUserDto {
 
   @ApiProperty({ required: false })
   age: string;
+
+  @ApiProperty({ required: false })
+  phoneNumber: string;
+
+  @ApiProperty({ required: false })
+  address: string;
 }
 
 export class changePasswordDto {
