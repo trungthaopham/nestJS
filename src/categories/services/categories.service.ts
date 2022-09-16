@@ -18,8 +18,11 @@ export class CategoriesService {
     }
   }
 
-  async getAll(): Promise<Category[]> {
-    return await this.categoryModel.find();
+  async getAll(options?): Promise<Category[]> {
+    if (options) {
+      return await this.categoryModel.find(options);
+    }
+    return await this.categoryModel.find(options);
   }
 
   async getById(id: string): Promise<Category> {

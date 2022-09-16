@@ -6,8 +6,15 @@ import {
   Get,
   Put,
   Delete,
+  Query,
 } from '@nestjs/common';
-import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
+import {
+  ApiBearerAuth,
+  ApiOperation,
+  ApiQuery,
+  ApiTags,
+} from '@nestjs/swagger';
+import helper from 'src/utils/helper';
 import { CategoryDto } from '../dto/category.dto';
 import { Category } from '../schemas/category.schema';
 import { CategoriesService } from '../services/categories.service';
@@ -26,8 +33,15 @@ export class CategoriesController {
 
   @ApiOperation({ summary: 'get all category' })
   @Get('/')
-  async getAll(): Promise<CategoryDto[]> {
-    return this.categoryService.getAll();
+  async getAll(@Query() query): Promise<any> {
+    let size = 15,
+      page = 0;
+    if (query.size) {
+      size = query.size;
+      page = query.page;
+    }
+    const result = await this.categoryService.getAll();
+    return helper.paginateAnArray(result, size, page);
   }
 
   @ApiOperation({ summary: 'get category by id' })

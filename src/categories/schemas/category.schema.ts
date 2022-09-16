@@ -1,13 +1,16 @@
 import { Prop, Schema, SchemaFactory } from '@nestjs/mongoose';
 import { Document } from 'mongoose';
+import { Factory } from 'nestjs-seeder';
 
 export type CategoryDocument = Category & Document;
 
-@Schema()
+@Schema({ timestamps: true })
 export class Category {
+  @Factory((faker) => faker.lorem.words(2))
   @Prop()
   name: string;
 
+  @Factory((faker) => faker.lorem.words(10))
   @Prop()
   description: string;
 
@@ -15,4 +18,4 @@ export class Category {
   isDeleted: boolean;
 }
 
-export const UserSchema = SchemaFactory.createForClass(Category);
+export const CategorySchema = SchemaFactory.createForClass(Category);
