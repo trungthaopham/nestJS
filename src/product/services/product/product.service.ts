@@ -19,7 +19,7 @@ export class ProductService {
   }
 
   async getAll(): Promise<Product[]> {
-    return await this.productModel.find();
+    return await this.productModel.find().populate('categoryId').lean();
   }
 
   async getById(id: string): Promise<Product> {

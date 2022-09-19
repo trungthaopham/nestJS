@@ -41,6 +41,9 @@ export class CategoriesController {
       page = query.page;
     }
     const result = await this.categoryService.getAll();
+    if (!query.isAll && query.isAll === true) {
+      return result;
+    }
     return helper.paginateAnArray(result, size, page);
   }
 

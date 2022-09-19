@@ -13,8 +13,8 @@ export class ProductDto {
   description: string;
 
   @ApiProperty()
-  @IsArray()
-  categoryId: [{ type: mongoose.Types.ObjectId }];
+  @IsString()
+  categoryId: string;
 
   @ApiProperty()
   @IsNumber()

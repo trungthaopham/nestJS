@@ -5,15 +5,15 @@ import * as mongoose from 'mongoose';
 export type ProductDocument = Product & Document;
 
 @Schema()
-export class Product {
+export class Product extends Document {
   @Prop()
   name: string;
 
   @Prop()
   description: string;
 
-  @Prop()
-  categoryId: [{ type: mongoose.Types.ObjectId }];
+  @Prop({ ref: 'Categories' })
+  categoryId: mongoose.Types.ObjectId;
 
   @Prop()
   price: number;

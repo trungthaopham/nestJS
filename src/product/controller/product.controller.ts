@@ -8,12 +8,14 @@ import {
   Param,
   Post,
   Put,
+  Query,
 } from '@nestjs/common';
 import { ApiBearerAuth, ApiOperation, ApiTags } from '@nestjs/swagger';
 import { ProductDto } from '../dto/product.dto';
 import { Product } from '../schemas/product.schema';
 import { ProductService } from '../services/product/product.service';
 import { CategoriesService } from '../../categories/services/categories.service';
+import helper from 'src/utils/helper';
 
 @ApiTags('Products')
 @ApiBearerAuth()
@@ -39,13 +41,23 @@ export class ProductController {
 
   @ApiOperation({ summary: 'get all product' })
   @Get('/')
-  async getAll(): Promise<ProductDto[]> {
-    return this.productService.getAll();
+  async getAll(@Query() query): Promise<Product[]> {
+    let size = 15,
+      page = 0;
+    if (query.size) {
+      size = query.size;
+      page = query.page;
+    }
+    const result = await this.productService.getAll();
+    if (!query.isAll && query.isAll === true) {
+      return result;
+    }
+    return helper.paginateAnArray(result, size, page);
   }
 
   @ApiOperation({ summary: 'get product by id' })
   @Get('/:id')
-  async getById(@Param('id') id: string): Promise<ProductDto> {
+  async getById(@Param('id') id: string): Promise<Product> {
     return this.productService.getById(id);
   }
 
@@ -54,7 +66,7 @@ export class ProductController {
   async update(
     @Param('id') id: string,
     @Body() product: ProductDto,
-  ): Promise<ProductDto> {
+  ): Promise<Product> {
     const checkCategory = await this.categoryService.getByCondition({
       _id: { $in: product.categoryId },
     });
@@ -67,7 +79,7 @@ export class ProductController {
 
   @ApiOperation({ summary: 'get product by id' })
   @Delete('/:id')
-  async delete(@Param('id') id: string): Promise<ProductDto> {
+  async delete(@Param('id') id: string): Promise<Product> {
     return await this.productService.delete(id);
   }
 }
