@@ -14,7 +14,7 @@ import {
   ApiQuery,
   ApiTags,
 } from '@nestjs/swagger';
-import helper from 'src/utils/helper';
+import helper from '../../utils/helper';
 import { CategoryDto } from '../dto/category.dto';
 import { Category } from '../schemas/category.schema';
 import { CategoriesService } from '../services/categories.service';

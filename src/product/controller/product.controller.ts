@@ -15,7 +15,7 @@ import { ProductDto } from '../dto/product.dto';
 import { Product } from '../schemas/product.schema';
 import { ProductService } from '../services/product/product.service';
 import { CategoriesService } from '../../categories/services/categories.service';
-import helper from 'src/utils/helper';
+import helper from '../../utils/helper';
 
 @ApiTags('Products')
 @ApiBearerAuth()
