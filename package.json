@@ -32,6 +32,7 @@
     "@nestjs/platform-express": "^9.0.0",
     "@nestjs/swagger": "^6.0.5",
     "@nestjs/typeorm": "^9.0.1",
+    "@netlify/plugin-nextjs": "^4.37.4",
     "@types/bcrypt": "^5.0.0",
     "@types/faker": "^6.6.9",
     "bcrypt": "^5.0.1",

@@ -44,7 +44,7 @@ export class UsersService {
     }
   }
 
-  async login(user: LoginUserDto): Promise<string> {
+  async login(user: LoginUserDto): Promise<any> {
     try {
       const foundUser: UserI = await this.findByEmail(user.email.toLowerCase());
       if (foundUser) {
@@ -53,8 +53,8 @@ export class UsersService {
           foundUser.password,
         );
         if (matches) {
-          const payload: UserI = await this.findOne(foundUser._id);
-          return this.authService.generateJwt(payload);
+          const user: UserI = await this.findOne(foundUser._id);
+          return this.authService.generateJwt(user);
         } else {
           throw new HttpException(
             'Login was not successfull, wrong credentials',
