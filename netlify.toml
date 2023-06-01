@@ -4,3 +4,10 @@
 
 [[plugins]]
   package = "@netlify/plugin-nextjs"
+
+[[redirects]]
+from = "/"
+to = "/api"
+status = 301
+force = false
+query = {path = ":path"}
